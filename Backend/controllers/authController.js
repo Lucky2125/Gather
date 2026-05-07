@@ -15,8 +15,46 @@ export const register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
     let user = await User.findOne({ email });
-    if (user) return res.status(400).json({ message: "User already exists" });
 
+    if (user) {
+      // If already verified
+      if (user.isVerified) {
+        return res.status(400).json({
+          message: "User already exists",
+        });
+      }
+
+      // If not verified, update password and resend OTP
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      user.name = name;
+      user.password = hashedPassword;
+
+      await user.save();
+
+      // Delete old OTP
+      await OTP.findOneAndDelete({
+        email,
+        action: "account_verification",
+      });
+
+      // Generate new OTP
+      const otp = generateOTP();
+
+      await OTP.create({
+        email,
+        otp,
+        action: "account_verification",
+      });
+
+      await sendOTPEmail(email, otp, "account_verification");
+
+      return res.status(200).json({
+        message: "New OTP sent to your email",
+        email,
+      });
+    }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -42,16 +80,14 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  console.log("🔍 Login request received:", req.body); // ✅ Add this
-
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Invalid credentials" });
+    if (!user)
+      return res.status(400).json({ message: "Invalid Email Address" });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
-      return res.status(400).json({ message: "Invalid credentials" });
+    if (!isMatch) return res.status(400).json({ message: "Invalid Passwaord" });
 
     if (!user.isVerified && user.role !== "admin") {
       const otp = generateOTP();
@@ -80,8 +116,6 @@ export const login = async (req, res) => {
       token: generateToken(user.id, user.role),
     });
   } catch (error) {
-    console.error("❌ Login Error:", error); // ✅ Add this
-
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 };

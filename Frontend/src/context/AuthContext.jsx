@@ -28,8 +28,6 @@ export const AuthProvider = ({ children }) => {
 
       return data;
     } catch (error) {
-      console.log("LOGIN ERROR:", error.response?.data || error.message);
-
       if (error.response?.data?.needsVerification) {
         throw error.response.data;
       }
