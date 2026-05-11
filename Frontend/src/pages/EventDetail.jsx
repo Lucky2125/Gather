@@ -343,7 +343,7 @@ const EventDetail = () => {
                   )}
 
                   {/* Booking Button */}
-                  {!user.role === "admin" && (
+                  {user.role !== "admin" ? (
                     <button
                       onClick={handleBooking}
                       disabled={
@@ -395,6 +395,10 @@ const EventDetail = () => {
                         "Confirm Registration"
                       )}
                     </button>
+                  ) : (
+                    <h1 className="flex text-center w-fll text-yellow-500 font-semibold bg-yellow-700/20 px-5 py-2 rounded-xl border-yellow-700 border text-sm">
+                      As an Admin, you are not allowed to book events.
+                    </h1>
                   )}
                 </div>
               </div>
