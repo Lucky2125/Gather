@@ -15,6 +15,13 @@ const Home = () => {
   const [events, setEvents] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const upcomingEvents = events.filter(
+    (event) => new Date(event.date) >= new Date(),
+  );
+
+  const expiredEvents = events.filter(
+    (event) => new Date(event.date) < new Date(),
+  );
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -116,7 +123,7 @@ const Home = () => {
       <div className="flex items-center justify-between mb-8 px-4 border-b border-slate-700 pb-4">
         <h2 className="text-3xl font-bold text-white">Upcoming Events</h2>
         <div className="text-slate-400 font-medium">
-          {events.length} results found
+          {upcomingEvents.length} results found
         </div>
       </div>
 
@@ -127,15 +134,13 @@ const Home = () => {
             Loading events...
           </p>
         </div>
-      ) : events.length === 0 ? (
+      ) : upcomingEvents.length === 0 ? (
         <div className="text-center py-20">
-          <p className="text-slate-400 text-lg">
-            No events found matching your search.
-          </p>
+          <p className="text-slate-400 text-lg">Now no upcoming Events</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4 pb-8">
-          {events.map((event) => (
+          {upcomingEvents.map((event) => (
             <div
               key={event._id}
               className="bg-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition flex flex-col border border-slate-700"
@@ -207,6 +212,107 @@ const Home = () => {
             </div>
           ))}
         </div>
+      )}
+      {expiredEvents.length !== 0 && (
+        <>
+          <div className="flex items-center justify-between mb-8 px-4 border-b border-slate-700 pb-4">
+            <h2 className="text-3xl font-bold text-white">Expired Events</h2>
+            <div className="text-slate-400 font-medium">
+              {expiredEvents.length} results found
+            </div>
+          </div>
+          {loading ? (
+            <div className="text-center py-20">
+              <Loader className="w-10 h-10 text-blue-500 animate-spin mx-auto mb-4" />
+              <p className="text-slate-300 text-lg font-semibold">
+                Loading events...
+              </p>
+            </div>
+          ) : expiredEvents.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-slate-400 text-lg">
+                No events found matching your search.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4 pb-8">
+              {expiredEvents.map((event) => (
+                <div
+                  key={event._id}
+                  className="bg-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition flex flex-col border border-slate-700"
+                >
+                  <div className="h-48 bg-slate-700 overflow-hidden relative">
+                    {event.image ? (
+                      <img
+                        src={event.image}
+                        alt={event.title}
+                        className="w-full h-full object-cover hover:scale-110 transition duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-slate-700 text-slate-300 font-bold text-2xl">
+                        {event.category || "Event"}
+                      </div>
+                    )}
+                    <div className="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-sm px-3 py-1.5 rounded-lg text-sm font-bold shadow-lg border border-slate-600">
+                      {event.ticketPrice === 0 ? (
+                        <span className="text-green-400">FREE</span>
+                      ) : (
+                        <span className="text-blue-400">
+                          ₹{event.ticketPrice}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="p-6 grow flex flex-col">
+                    <div className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">
+                      {event.category}
+                    </div>
+                    <h2 className="text-xl font-bold text-white mb-3 line-clamp-2">
+                      {event.title}
+                    </h2>
+                    <div className="flex flex-col gap-3 mb-4 text-slate-300 text-sm">
+                      <div className="flex items-center gap-3">
+                        <Calendar className="w-4 h-4 text-blue-400 shrink-0" />
+                        <span>
+                          {new Date(event.date).toLocaleDateString(undefined, {
+                            weekday: "short",
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <MapPin className="w-4 h-4 text-indigo-400 shrink-0" />
+                        <span className="truncate">{event.location}</span>
+                      </div>
+                    </div>
+                    <div className="mt-auto">
+                      <div className="w-full bg-slate-700 rounded-full h-2 mb-2">
+                        <div
+                          className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                          style={{
+                            width: `${(event.availableSeats / event.totalSeats) * 100}%`,
+                          }}
+                        ></div>
+                      </div>
+                      <p className="text-xs text-slate-400 mb-4">
+                        {event.availableSeats} of {event.totalSeats} seats
+                        remaining
+                      </p>
+                      <Link
+                        to={`/events/${event._id}`}
+                        className="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg"
+                      >
+                        View Details
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
 
       {/* Footer Section */}
