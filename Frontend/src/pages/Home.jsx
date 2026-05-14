@@ -15,6 +15,7 @@ const Home = () => {
   const [events, setEvents] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+
   const upcomingEvents = events.filter(
     (event) => new Date(event.date) >= new Date(),
   );
@@ -26,18 +27,15 @@ const Home = () => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       fetchEvents();
-    }, 400); // 400ms debounce
+    }, 400);
     return () => clearTimeout(timeoutId);
   }, [search]);
 
   const fetchEvents = async () => {
     try {
       setLoading(true);
-      const { data } = await api.get(`/events`, {
-        params: { search },
-      });
+      const { data } = await api.get(`/events`, { params: { search } });
 
-      // Handle different backend response structures safely
       setEvents(
         Array.isArray(data)
           ? data
@@ -55,30 +53,34 @@ const Home = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-950">
-      {/* Hero Section */}
-      <div className="relative bg-slate-900 text-white rounded-2xl overflow-hidden mb-12 shadow-2xl mx-4 mt-6">
-        <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=3000&auto=format&fit=crop')] bg-cover bg-center"></div>
-        <div className="absolute inset-0 bg-slate-900/60"></div>
+      <div className="relative bg-slate-900 text-white rounded-3xl overflow-hidden mb-16 shadow-2xl mx-4 mt-6">
+        <div className="absolute inset-0 opacity-30 bg-[url('https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=3000&auto=format&fit=crop')] bg-cover bg-center"></div>
+        <div className="absolute inset-0 bg-linear-to-b from-slate-900/70 via-slate-900/80 to-slate-900"></div>
+
         <div className="relative p-10 md:p-20 text-center flex flex-col items-center z-10">
-          <span className="bg-slate-800/80 backdrop-blur-md text-slate-200 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase mb-6 border border-slate-700">
-            Welcome to Eventora
+          <span className="inline-block bg-white/10 backdrop-blur-md text-blue-300 px-5 py-2 rounded-full text-sm font-semibold tracking-widest mb-6 border border-white/20">
+            WELCOME TO EVENTORA
           </span>
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight tracking-tight text-white">
-            Find Your Next <br />
-            <span className="text-blue-400">Unforgettable</span> Experience
+
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight tracking-tighter">
+            Discover Unforgettable <br />
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-indigo-400">
+              Experiences
+            </span>
           </h1>
-          <p className="text-slate-300 text-lg md:text-xl mb-10 max-w-2xl mx-auto font-light leading-relaxed">
-            Discover the best tech conferences, late-night music festivals, and
-            hands-on workshops happening directly in your area. Secure your spot
-            today.
+
+          <p className="text-slate-300 text-lg md:text-xl max-w-2xl mx-auto mb-10">
+            Find the best events happening around you — from tech conferences to
+            music festivals.
           </p>
 
-          <div className="w-full max-w-2xl mx-auto relative flex items-center shadow-2xl group">
-            <Search className="absolute left-6 text-slate-400 w-5 h-5 group-focus-within:text-slate-600 transition-colors" />
+          {/* Search Bar */}
+          <div className="w-full max-w-2xl mx-auto relative group">
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="Search events by title, location or category......"
-              className="w-full pl-16 pr-6 py-4 rounded-xl text-lg text-slate-900 bg-slate-100 border border-slate-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all placeholder-slate-500 font-medium"
+              placeholder="Search events by title, location, or category..."
+              className="w-full pl-16 pr-6 py-4 rounded-2xl text-lg bg-white text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 border border-slate-300 transition-all"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -86,124 +88,125 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Why Choose Us / Features row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 px-4">
-        <div className="bg-slate-800 p-8 rounded-2xl shadow-lg border border-slate-700 flex flex-col items-center text-center hover:-translate-y-1 transition duration-300">
-          <div className="w-16 h-16 bg-blue-500 text-white rounded-2xl flex items-center justify-center text-2xl mb-6 shadow-lg">
-            <Clock className="w-8 h-8" />
+      {/* ====================== FEATURES SECTION ====================== */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20 px-4 max-w-7xl mx-auto">
+        <div className="bg-slate-900/50 border border-slate-700 p-8 rounded-3xl hover:border-blue-500/30 transition-all group">
+          <div className="w-14 h-14 bg-blue-500/10 text-blue-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition">
+            <Clock className="w-7 h-7" />
           </div>
-          <h3 className="text-xl font-bold text-white mb-3">Fast Booking</h3>
-          <p className="text-slate-400 text-sm leading-relaxed">
-            Secure your tickets instantly with our fast streamlined booking
-            infrastructure built for speed.
+          <h3 className="text-2xl font-semibold text-white mb-3">
+            Lightning Fast Booking
+          </h3>
+          <p className="text-slate-400">
+            Instant ticket booking with seamless experience and real-time
+            availability.
           </p>
         </div>
-        <div className="bg-slate-800 p-8 rounded-2xl shadow-lg border border-slate-700 flex flex-col items-center text-center hover:-translate-y-1 transition duration-300">
-          <div className="w-16 h-16 bg-indigo-500 text-white rounded-2xl flex items-center justify-center text-2xl mb-6 shadow-lg">
-            <Ticket className="w-8 h-8" />
+
+        <div className="bg-slate-900/50 border border-slate-700 p-8 rounded-3xl hover:border-indigo-500/30 transition-all group">
+          <div className="w-14 h-14 bg-indigo-500/10 text-indigo-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition">
+            <Ticket className="w-7 h-7" />
           </div>
-          <h3 className="text-xl font-bold text-white mb-3">Seamless Access</h3>
-          <p className="text-slate-400 text-sm leading-relaxed">
-            Download tickets instantly or manage them right from your personal
-            dashboard with easily.
+          <h3 className="text-2xl font-semibold text-white mb-3">
+            Easy Access
+          </h3>
+          <p className="text-slate-400">
+            Digital tickets, QR codes, and complete event management in one
+            dashboard.
           </p>
         </div>
-        <div className="bg-slate-800 p-8 rounded-2xl shadow-lg border border-slate-700 flex flex-col items-center text-center hover:-translate-y-1 transition duration-300">
-          <div className="w-16 h-16 bg-purple-500 text-white rounded-2xl flex items-center justify-center text-2xl mb-6 shadow-lg">
-            <Shield className="w-8 h-8" />
+
+        <div className="bg-slate-900/50 border border-slate-700 p-8 rounded-3xl hover:border-purple-500/30 transition-all group">
+          <div className="w-14 h-14 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition">
+            <Shield className="w-7 h-7" />
           </div>
-          <h3 className="text-xl font-bold text-white mb-3">Secure Platform</h3>
-          <p className="text-slate-400 text-sm leading-relaxed">
-            All transactions and registrations are bounded by cutting-edge
-            security and 2FA OTP tech.
+          <h3 className="text-2xl font-semibold text-white mb-3">
+            Secure & Trusted
+          </h3>
+          <p className="text-slate-400">
+            Protected payments, 2FA security, and verified organizers.
           </p>
         </div>
       </div>
 
-      <div className="flex items-center justify-between mb-8 px-4 border-b border-slate-700 pb-4">
-        <h2 className="text-3xl font-bold text-white">Upcoming Events</h2>
-        <div className="text-slate-400 font-medium">
-          {upcomingEvents.length} results found
-        </div>
+      {/* ====================== UPCOMING EVENTS ====================== */}
+      <div className="px-4 mb-8 flex items-end justify-between">
+        <h2 className="text-4xl font-bold text-white"><span className="text-blue-500">Upcoming</span> Events</h2>
+        <p className="text-slate-400 font-medium">
+          {upcomingEvents.length} Events
+        </p>
       </div>
 
       {loading ? (
         <div className="text-center py-20">
-          <Loader className="w-10 h-10 text-blue-500 animate-spin mx-auto mb-4" />
-          <p className="text-slate-300 text-lg font-semibold">
-            Loading events...
-          </p>
+          <Loader className="w-12 h-12 text-blue-500 animate-spin mx-auto mb-4" />
+          <p className="text-slate-400 text-lg">Loading amazing events...</p>
         </div>
       ) : upcomingEvents.length === 0 ? (
-        <div className="text-center py-20">
-          <p className="text-slate-400 text-lg">Now no upcoming Events</p>
+        <div className="text-center py-20 text-slate-400">
+          No upcoming events found
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4 pb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4 pb-12">
           {upcomingEvents.map((event) => (
             <div
               key={event._id}
-              className="bg-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition flex flex-col border border-slate-700"
+              className="group bg-slate-900 border border-slate-700 rounded-3xl overflow-hidden hover:border-blue-500/50 hover:shadow-2xl transition-all duration-300 flex flex-col"
             >
-              <div className="h-48 bg-slate-700 overflow-hidden relative">
+              <div className="relative h-52 overflow-hidden">
                 {event.image ? (
                   <img
                     src={event.image}
                     alt={event.title}
-                    className="w-full h-full object-cover hover:scale-110 transition duration-300"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-slate-700 text-slate-300 font-bold text-2xl">
-                    {event.category || "Event"}
+                  <div className="w-full h-full bg-slate-800 flex items-center justify-center">
+                    <span className="text-4xl text-slate-600 font-bold">
+                      {event.category?.slice(0, 1)}
+                    </span>
                   </div>
                 )}
-                <div className="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-sm px-3 py-1.5 rounded-lg text-sm font-bold shadow-lg border border-slate-600">
+
+                <div className="absolute top-4 right-4 bg-black/70 px-4 py-1.5 rounded-2xl text-sm font-semibold backdrop-blur-md">
                   {event.ticketPrice === 0 ? (
-                    <span className="text-green-400">FREE</span>
+                    <span className="text-emerald-400">FREE</span>
                   ) : (
                     <span className="text-blue-400">₹{event.ticketPrice}</span>
                   )}
                 </div>
               </div>
-              <div className="p-6 grow flex flex-col">
-                <div className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">
+
+              <div className="p-6 flex-1 flex flex-col">
+                <div className="uppercase text-blue-400 text-xs font-semibold tracking-wider mb-2">
                   {event.category}
                 </div>
-                <h2 className="text-xl font-bold text-white mb-3 line-clamp-2">
+                <h3 className="text-xl font-semibold text-white line-clamp-2 mb-4 group-hover:text-blue-300 transition-colors">
                   {event.title}
-                </h2>
-                <div className="flex flex-col gap-3 mb-4 text-slate-300 text-sm">
+                </h3>
+
+                <div className="space-y-2.5 text-sm text-slate-400 mb-6">
                   <div className="flex items-center gap-3">
-                    <Calendar className="w-4 h-4 text-blue-400 shrink-0" />
+                    <Calendar className="w-4 h-4 text-blue-400" />
                     <span>
-                      {new Date(event.date).toLocaleDateString(undefined, {
+                      {new Date(event.date).toLocaleDateString("en-IN", {
                         weekday: "short",
-                        year: "numeric",
                         month: "short",
                         day: "numeric",
+                        year: "numeric",
                       })}
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <MapPin className="w-4 h-4 text-indigo-400 shrink-0" />
-                    <span className="truncate">{event.location}</span>
+                    <MapPin className="w-4 h-4 text-indigo-400" />
+                    <span className="line-clamp-1">{event.location}</span>
                   </div>
                 </div>
+
                 <div className="mt-auto">
-                  <div className="w-full bg-slate-700 rounded-full h-2 mb-2">
-                    <div
-                      className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                      style={{
-                        width: `${(event.availableSeats / event.totalSeats) * 100}%`,
-                      }}
-                    ></div>
-                  </div>
-                  <p className="text-xs text-slate-400 mb-4">
-                    {event.availableSeats} of {event.totalSeats} seats remaining
-                  </p>
                   <Link
                     to={`/events/${event._id}`}
-                    className="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg"
+                    className="block w-full text-center bg-blue-600 hover:bg-blue-500 py-3.5 rounded-2xl font-semibold text-white transition"
                   >
                     View Details
                   </Link>
@@ -213,122 +216,68 @@ const Home = () => {
           ))}
         </div>
       )}
-      {expiredEvents.length !== 0 && (
+
+      {/* ====================== EXPIRED EVENTS ====================== */}
+      {expiredEvents.length > 0 && (
         <>
-          <div className="flex items-center justify-between mb-8 px-4 border-b border-slate-700 pb-4">
-            <h2 className="text-3xl font-bold text-white">Expired Events</h2>
-            <div className="text-slate-400 font-medium">
-              {expiredEvents.length} results found
-            </div>
+          <div className="px-4 mb-8 flex items-end justify-between mt-16">
+            <h2 className="text-4xl font-bold text-white">
+              <span className="text-red-500">Past</span> Events
+            </h2>
+            <p className="text-slate-400 font-medium">
+              {expiredEvents.length} Events
+            </p>
           </div>
-          {loading ? (
-            <div className="text-center py-20">
-              <Loader className="w-10 h-10 text-blue-500 animate-spin mx-auto mb-4" />
-              <p className="text-slate-300 text-lg font-semibold">
-                Loading events...
-              </p>
-            </div>
-          ) : expiredEvents.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-slate-400 text-lg">
-                No events found matching your search.
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4 pb-8">
-              {expiredEvents.map((event) => (
-                <div
-                  key={event._id}
-                  className="bg-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition flex flex-col border border-slate-700"
-                >
-                  <div className="h-48 bg-slate-700 overflow-hidden relative">
-                    {event.image ? (
-                      <img
-                        src={event.image}
-                        alt={event.title}
-                        className="w-full h-full object-cover hover:scale-110 transition duration-300"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-slate-700 text-slate-300 font-bold text-2xl">
-                        {event.category || "Event"}
-                      </div>
-                    )}
-                    <div className="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-sm px-3 py-1.5 rounded-lg text-sm font-bold shadow-lg border border-slate-600">
-                      {event.ticketPrice === 0 ? (
-                        <span className="text-green-400">FREE</span>
-                      ) : (
-                        <span className="text-blue-400">
-                          ₹{event.ticketPrice}
-                        </span>
-                      )}
-                    </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4 pb-12">
+            {expiredEvents.map((event) => (
+              <div
+                key={event._id}
+                className="group bg-slate-900 border border-slate-700 rounded-3xl overflow-hidden hover:border-red-500/50 hover:bg-red-500/10 transition-all duration-300 flex flex-col "
+              >
+                <div className="p-6 flex-1 flex flex-col">
+                  <div className="text-red-400 text-xs font-semibold tracking-wider mb-2">
+                    {event.category}
                   </div>
-                  <div className="p-6 grow flex flex-col">
-                    <div className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">
-                      {event.category}
+
+                  <h3 className="text-lg font-semibold text-white line-clamp-2 mb-4 group-hover:text-white transition-colors">
+                    {event.title}
+                  </h3>
+
+                  <div className="text-xs text-slate-400 space-y-2 mb-6">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4" />
+                      {new Date(event.date).toLocaleDateString("en-IN", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
                     </div>
-                    <h2 className="text-xl font-bold text-white mb-3 line-clamp-2">
-                      {event.title}
-                    </h2>
-                    <div className="flex flex-col gap-3 mb-4 text-slate-300 text-sm">
-                      <div className="flex items-center gap-3">
-                        <Calendar className="w-4 h-4 text-blue-400 shrink-0" />
-                        <span>
-                          {new Date(event.date).toLocaleDateString(undefined, {
-                            weekday: "short",
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          })}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <MapPin className="w-4 h-4 text-indigo-400 shrink-0" />
-                        <span className="truncate">{event.location}</span>
-                      </div>
-                    </div>
-                    <div className="mt-auto">
-                      <div className="w-full bg-slate-700 rounded-full h-2 mb-2">
-                        <div
-                          className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                          style={{
-                            width: `${(event.availableSeats / event.totalSeats) * 100}%`,
-                          }}
-                        ></div>
-                      </div>
-                      <p className="text-xs text-slate-400 mb-4">
-                        {event.availableSeats} of {event.totalSeats} seats
-                        remaining
-                      </p>
-                      <Link
-                        to={`/events/${event._id}`}
-                        className="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg"
-                      >
-                        View Details
-                      </Link>
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4" />
+                      <span className="line-clamp-1">{event.location}</span>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            ))}
+          </div>
         </>
       )}
 
-      {/* Footer Section */}
-      <footer className="mt-auto pt-16 pb-8 border-t border-slate-700 text-center px-4">
-        <div className="flex justify-center items-center gap-2 mb-4">
-          <Ticket className="w-6 h-6 text-blue-400" />
-          <span className="text-xl font-bold text-white">Eventora</span>
+      {/* ====================== FOOTER ====================== */}
+      <footer className="mt-auto border-t border-slate-800 py-16 px-4 text-center">
+        <div className="flex justify-center items-center gap-3 mb-4">
+          <Ticket className="w-8 h-8 text-blue-400" />
+          <span className="text-3xl font-bold text-white">Eventora</span>
         </div>
-        <p className="text-slate-400 text-sm mb-6 max-w-md mx-auto">
-          The simplest, most dynamic way to manage, discover, and host
-          world-class events in your local city. Let's make memories together.
+        <p className="text-slate-400 max-w-md mx-auto mb-6">
+          Connecting people with unforgettable experiences. Discover • Book •
+          Celebrate.
         </p>
-        <div className="text-xs text-slate-500 font-medium uppercase tracking-wider">
-          &copy; {new Date().getFullYear()} Eventora Platform. All rights
-          reserved.
-        </div>
+        <p className="text-xs text-slate-500">
+          © {new Date().getFullYear()} Eventora. All rights reserved.
+        </p>
       </footer>
     </div>
   );
